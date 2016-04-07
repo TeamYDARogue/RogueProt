@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ResourceManager : SingletonMonoBehaviour<ResourceManager> {
 
-    struct ResourceData
+    class ResourceData
     {
         public string resourceName;
         public GameObject resource;

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class ResourceManager : SingletonMonoBehaviour<ResourceManager> {
 
+    /// <summary>
+    /// リソース管理データ
+    /// </summary>
     class ResourceData
     {
         public string resourceName;
@@ -28,7 +31,10 @@ public class ResourceManager : SingletonMonoBehaviour<ResourceManager> {
 
     }
 
-
+    /// <summary>
+    /// 指定シーンのリソースを読み込む
+    /// </summary>
+    /// <param name="sceneName">シーンの名前</param>
     public void ResourcesLoad(string sceneName)
     {
 
@@ -45,6 +51,11 @@ public class ResourceManager : SingletonMonoBehaviour<ResourceManager> {
         m_resouce = null;
     }
 
+    /// <summary>
+    /// シーンに必要なリソースを取得する
+    /// </summary>
+    /// <param name="key">リソースの名前</param>
+    /// <returns>リソース</returns>
     public GameObject GetResourceScene(string key)
     {
         if(m_sceneResources.ContainsKey(key))
@@ -55,11 +66,18 @@ public class ResourceManager : SingletonMonoBehaviour<ResourceManager> {
         return null;
     }
 
+    /// <summary>
+    /// 読み込んだリソースを全て破棄する
+    /// </summary>
     public void ResourcesUnLoad()
     {
         StartCoroutine(UnLoadResources());
     }
 
+    /// <summary>
+    /// ResourcesUnLoad関数を利用するべし。
+    /// </summary>
+    /// <returns></returns>
     IEnumerator UnLoadResources()
     {
         foreach(KeyValuePair<string,ResourceData> pair in m_sceneResources)

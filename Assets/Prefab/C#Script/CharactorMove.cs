@@ -4,74 +4,87 @@ using System.Collections;
 public class CharactorMove : MonoBehaviour
 {
     
-/// <summary>
-/// Charactor move script
-/// iTweenでマス目移動する際に一瞬で移動しないように調整をかける
-/// </summary>
-    bool moveflg = false; // 移動中をtrue
     private Animator animator;
+    [SerializeField]
+    private float m_distance = 5.0f;
+    [SerializeField]
+    private float m_hAngle = 0.0f;
+    [SerializeField]
+    private float m_vAngle = 0.0f;
+    [SerializeField]
+    private Vector3 m_offset = Vector3.zero;
+    private float m_rotateTime;
+
+    public bool IsChanged
+    {
+        get;
+        private set;
+    }
+    bool moveflg = false;
     void Start(){
         animator = GetComponent<Animator>();
     }
-    /// <summary>
-    /// 左右キーで方向転換
-    /// 上キーで向いている方向に移動
-    /// </summary>
     void Update()
     {
         Vector3? movepos = null;
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            transform.Rotate(new Vector3(0.0f, -90f, 0.0f));
-        }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            transform.Rotate(new Vector3(0.0f, 90f, 0.0f));
-		
-        }
-	
+        transform.rotation = Quaternion.Euler(m_vAngle, m_hAngle, 0);
         if (Input.GetKey(KeyCode.UpArrow))
         {
 
-            if (transform.eulerAngles.y==0.0f)//標準
+            if (m_hAngle==0)
             {
                 movepos = transform.position + new Vector3(0.0f, 0.0f, 25.0f);
             }
-            if (transform.eulerAngles.y==90.00001f)//右向き
-            { //右を向いたときになぜか補正がかかるのでこのような数値になっている
+            if (m_hAngle==90.0f)
+            { 
                 movepos = transform.position + new Vector3(25.0f, 0.0f, 0.0f);
             }
-            if (transform.eulerAngles.y == 180.0f)//後ろ
+            if (m_hAngle ==180.0f)
             {
                 movepos = transform.position + new Vector3(0.0f, 0.0f, -25.0f);
             }
-            if (transform.eulerAngles.y == 270.0f)//左
+            if (m_hAngle== 270.0f)
             {
                 movepos = transform.position + new Vector3(-25.0f, 0.0f, 0.0f);
-
             }
-                     ///ターン送るときはここに記述
-
+     
         }
-        // キーが押されて移動量が算出された状態且つ移動中でない場合に発動する
-        if (movepos != null && moveflg == false){
-                iTween.MoveTo(gameObject,  iTween.Hash(
-                "position",
-                movepos, // 移動先
-               "time",0.7 , // 移動にかかる秒数(要調整)
-               "oncomplete",
-               "complete" // 移動が終了すると関数complete()が呼ばれる
-               ));
-            moveflg = true;
-
+        if (movepos != null && moveflg == false)
+        {
+                iTween.MoveTo(gameObject,  iTween.Hash("position", movepos,"time",0.7 ,"oncomplete","complete"));
+                moveflg = true;
         }
         animator.SetBool("moveflg", moveflg);
+        CheckInputKey();
     }
 
-    /// <summary>
-    /// moveflgを折る
-    /// </summary>
+    void CheckInputKey()
+    {
+        if (IsChanged) return;
+        if (Input.GetAxis("Horizontal") > 0)
+        {
+            ChangeRotation(0.7f, m_hAngle, m_hAngle + 90.0f);
+            IsChanged = false;
+        }
+        else if (Input.GetAxis("Horizontal") < 0)
+        {
+            ChangeRotation(0.7f, m_hAngle, m_hAngle - 90.0f);
+            IsChanged = false;
+        }
+        if (m_hAngle >= 360.0f) { m_hAngle = 0.0f; }
+        if (m_hAngle < 0) { m_hAngle *= -3.0f; }
+    }
+    void ChangeRotation(float time, float begin, float end)
+    {
+        m_rotateTime = time;
+        IsChanged = true;
+        iTween.ValueTo(gameObject, iTween.Hash("from", begin, "to", end, "time", m_rotateTime, "onupdate", "UpdateHandler"));
+    }
+    void UpdateHandler(float value)
+    {
+        m_hAngle = value;
+        m_rotateTime -= Time.deltaTime;
+    }
     void complete()
     {
         moveflg = false;

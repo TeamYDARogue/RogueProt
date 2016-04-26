@@ -1,6 +1,16 @@
 ﻿
 using UnityEngine;
 using System.Collections;
+/*
+追加したもの
+・公開のゲームのオブジェクトの追加
+・ if (m_hAngle==0)の処理内に、GimmckSpearの
+　SpearAction()を呼び出している
+
+以上の追加を行いました。
+
+*/
+
 public class CharactorMove : MonoBehaviour
 {
     
@@ -15,6 +25,9 @@ public class CharactorMove : MonoBehaviour
     private Vector3 m_offset = Vector3.zero;
     private float m_rotateTime;
 
+    public GameObject spearobj;
+
+
     public bool IsChanged
     {
         get;
@@ -23,6 +36,8 @@ public class CharactorMove : MonoBehaviour
     bool moveflg = false;
     void Start(){
         animator = GetComponent<Animator>();
+
+        
     }
     void Update()
     {
@@ -30,24 +45,63 @@ public class CharactorMove : MonoBehaviour
         transform.rotation = Quaternion.Euler(m_vAngle, m_hAngle, 0);
         if (Input.GetKey(KeyCode.UpArrow))
         {
-
+           
             if (m_hAngle==0)
             {
                 movepos = transform.position + new Vector3(0.0f, 0.0f, 25.0f);
+    
+                GimmckSpear gimmckspear = spearobj.GetComponent<GimmckSpear>();
+                if (gimmckspear != null)
+                {
+                    gimmckspear.SpearAction();
+                }
+                else
+                {
+                    Debug.LogWarning("set Script GimmckSpear");
+                }
+                
             }
             if (m_hAngle==90.0f)
             { 
                 movepos = transform.position + new Vector3(25.0f, 0.0f, 0.0f);
+                GimmckSpear gimmckspear = spearobj.GetComponent<GimmckSpear>();
+                if (gimmckspear != null)
+                {
+                    gimmckspear.SpearAction();
+                }
+                else
+                {
+                    Debug.LogWarning("set Script GimmckSpear");
+                }
             }
             if (m_hAngle ==180.0f)
             {
                 movepos = transform.position + new Vector3(0.0f, 0.0f, -25.0f);
+                GimmckSpear gimmckspear = spearobj.GetComponent<GimmckSpear>();
+                if (gimmckspear != null)
+                {
+                    gimmckspear.SpearAction();
+                }
+                else
+                {
+                    Debug.LogWarning("set Script GimmckSpear");
+                }
+
             }
             if (m_hAngle== 270.0f)
             {
                 movepos = transform.position + new Vector3(-25.0f, 0.0f, 0.0f);
+                GimmckSpear gimmckspear = spearobj.GetComponent<GimmckSpear>();
+                if (gimmckspear != null)
+                {
+                    gimmckspear.SpearAction();
+                }
+                else
+                {
+                    Debug.LogWarning("set Script GimmckSpear");
+                }
             }
-     
+
         }
         if (movepos != null && moveflg == false)
         {
@@ -73,6 +127,7 @@ public class CharactorMove : MonoBehaviour
         }
         if (m_hAngle >= 360.0f) { m_hAngle = 0.0f; }
         if (m_hAngle < 0) { m_hAngle *= -3.0f; }
+        
     }
     void ChangeRotation(float time, float begin, float end)
     {
